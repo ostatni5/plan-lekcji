@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <link href='http://fonts.googleapis.com/css?family=Advent+Pro&subset=latin,latin-ext' rel='stylesheet' type='text/css'/>
+    <link href="css/dzisiaj.css" rel="stylesheet" />
+    <link href="css/tydzien.css" rel="stylesheet" />
+    <link href="css/ustawienia.css" rel="stylesheet" />    
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/captcha.css" rel="stylesheet" />
+    <link href="css/logowanie.css" rel="stylesheet" />    
+    <script src="libs/jquery-3.1.0.min.js"></script>
+    <script src="js/Settings.js" charset="UTF-8"></script>
+    <script src="js/Database.js" charset="UTF-8"></script>
+    <script src="js/Ajax.js" charset="UTF-8"></script>
+    <script src="js/Zegar.js" charset="UTF-8"></script>
+    <script src="js/UI.js" charset="UTF-8"></script>
+    <script src="js/Captcha.js"></script>
+    <script src="js/Main.js" charset="UTF-8"></script>   
+    <title>Plan Lekcji</title>
+    <script>
+        $(document).ready(function () {            
+            main.init()
+            //Ui.init()
+        });
+    </script>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <noscript>
+
+       <p>Nie hakuj bo nie umiesz.</p>
+       <p>(Włącz JS)</p>
+
+    </noscript>
+    <button id="menu_przycisk">
+        <img src="gfx/menu-3.png" alt="menu_przycisk" />
+    </button>
+    <div id="ekran_alert" class="ekran_alert">
+        <div id="alert_tekst">
+        </div>
+        <button class="ok-alert">OK</button>
+    </div>
+    <div id="ekran_logowanie" class="logowanie">
+        <h2>ZALOGUJ/ZAREJESTRUJ</h2>
+            <div id="form">
+                <span>Login:</span>                
+                <input id="login" type="text" />                
+                <span>Hasło:</span>
+                <input id="haslo" type="password" />
+                <input id="dalej" type="button" value="Dalej"/>
+            </div>
+    </div>
+    <div id="ekran_captcha" class="captcha animuj-captcha">
+        <h2>CZŁOWIEK?! CZY TO TY?</h2>
+        <div id="captcha_tresc">
+            <div id="captcha_pytanie">
+                Zaznacz czołgi bo są fajne.
+            </div>
+            <div id="captcha_obrazy">
+                <img class="captcha-obraz" src="gfx/cpatcha/czolg1.png">
+                <img class="captcha-obraz" src="gfx/cpatcha/czolg2.png">
+                <img class="captcha-obraz" src="gfx/cpatcha/czolg3.png">
+                <img class="captcha-obraz" src="gfx/cpatcha/czolg4.png">
+            </div>
+            <button id="captcha_losuj">
+                Daj inne
+            </button>
+            <button id="captcha_submit">
+                Tak to ja!
+            </button>
+        </div>
+    </div>
+    <div id="ekran_ustawienia" class="ekran-dark ">
+        <input type="button" class="close" value="X"/>
+        <h2>USTAWIENIA</h2>
+        <ul>
+            <li id="btn_godziny" class="ustawienia-btn"><img src="gfx/clock.png" alt=""><span>GODZINY</span></li>
+            <li id="btn_kolorystyka" class="ustawienia-btn" ><img src="gfx/palette.png" alt=""><span>KOLORYSTYKA</span></li>
+            <li id="btn_startowy" class="ustawienia-btn" ><img src="gfx/smartphone.png" alt=""><span>EKRAN STARTOWY</span></li>
+            <li id="btn_baza" class="ustawienia-btn"><img src="gfx/database.png" alt=""><span>BAZA DANYCH</span></li>
+        </ul>
+    </div>
+    <div id="ekran_baza" class="ekran-dark pod_menu">
+        <input type="button" class="close" value="X" />
+        <h2>BAZY DANYCH</h2>
+                <ul>
+            <li id="add_tabela" class="baza-operacje"><img src="gfx/database.png" alt=""><span>DODAJ TABELE</span></li>
+            <li id="del_tabela" class="baza-operacje"><img src="gfx/database.png" alt=""><span>USUŃ TABELE</span></li>
+            <li id="add_dane" class="baza-operacje"><img src="gfx/database.png" alt=""><span>DODAJ DANE</span></li>
+            <li id="del_dane" class="baza-operacje"><img src="gfx/database.png" alt=""><span>USUŃ DANE</span></li>
+            <li id="get_dane" class="baza-operacje"><img src="gfx/database.png" alt=""><span>POBIERZ DANE</span></li>
+        </ul>
+    </div>
+    <div id="ekran_godziny" class="ekran-dark pod_menu_wybor">
+        <input type="button" class="close" value="X" />
+        <h2>GODZINY</h2>
+        <div id="godziny_dane">
+            <div>Lp</div>
+            <div>Początek</div>
+            <div>Koniec</div>
+        </div>
+        
+    </div>
+    <div id="ekran_godziny_wybor" class="ekran-dark pod_menu_wybor ">
+        <input type="button" class="close" value="X" />
+        <input type="button" class="submit" value="&#x2713;" />
+        <h2>WYBÓR GODZINY  </h2>
+        <div id="wybor_widok"><span class="widok-godzina">00</span>:<span class="widok-minuta">00</span></div>
+        <div id="wybor_godzina" class="wybory">
+            <div class="wybor-up">	/\	</div>
+            <div class="wybor-tarcza">
+                <div class="wybor-tarcza-k1"></div>
+                <div class="wybor-tarcza-k2"></div>
+                <div class="wybor-tarcza-k3"></div>
+                <div class="lista-liczb">
+                    <div>		</div>
+                    <div>00</div>
+                    <div>01</div>
+                    <div>02</div>
+                    <div>03</div>
+                    <div>04</div>
+                    <div>05</div>
+                    <div>06</div>
+                    <div>07</div>
+                    <div>08</div>
+                    <div>09</div>
+                    <div>10</div>
+                    <div>11</div>
+                    <div>12</div>
+                    <div>13</div>
+                    <div>14</div>
+                    <div>15</div>
+                    <div>16</div>
+                    <div>17</div>
+                    <div>18</div>
+                    <div>19</div>
+                    <div>20</div>
+                    <div>21</div>
+                    <div>22</div>
+                    <div>23</div>
+                    <div>		</div>
+                </div>
+            </div>
+            <div class="wybor-down">	\/	</div>
+        </div>
+        <div id="wybor_minuta"  class="wybory">
+            <div class="wybor-up">	/\	</div>
+            <div class="wybor-tarcza">
+                <div class="wybor-tarcza-k1"></div>
+                <div class="wybor-tarcza-k2"></div>
+                <div class="wybor-tarcza-k3"></div>
+                <div class="lista-liczb">
+                    <div>		</div>
+                    <div>00</div>
+                    <div>05</div>
+                    <div>10</div>
+                    <div>15</div>
+                    <div>20</div>
+                    <div>25</div>
+                    <div>30</div>
+                    <div>35</div>
+                    <div>40</div>
+                    <div>45</div>
+                    <div>50</div>
+                    <div>55</div>
+                    <div>		</div>
+                </div>              
+            </div>
+            <div class="wybor-down">	\/	</div>
+        </div>      
+    </div>
+    <div id="ekran_dzisiaj" class="ekran-dark pod_menu_wybor">
+        <input type="button" class="close" value="X" />
+        <h2>DZISIAJ</h2>
+        <div id="dzisiaj_dane">
+            <div>Lp</div>
+            <div>Lekcja</div>
+            <div>Sala</div>
+        </div>
+    </div>
+    <div id="ekran_tydzien" class="ekran-dark pod_menu_wybor">
+        <input type="button" class="close" value="X" />
+        <h2>TYDZIEŃ</h2>
+        <div id="tydzien_dane">
+            <div>Lp</div>
+            <div>PN</div>
+            <div>WT</div>
+            <div>ŚR</div>
+            <div>CZ</div>
+            <div>PT</div>            
+        </div>
+    </div>
+    <div id="ekran">
+        <div id="zegar">
+            <div id="godzina" class="zegar_elementy zegar-godzina">
+                09
+            </div>
+            <div id="kropki" class="zegar_elementy kropki">
+                :
+            </div>
+            <div id="minuta" class="zegar_elementy zegar-minuta">
+                11
+            </div>
+        </div>
+        <div id="prognoza">
+            <div id="teraz">
+               TERAZ:
+            </div>
+            <div id="lekcja_teraz">
+                matma
+            </div>
+            <div id="sala_teraz">
+                sala 123
+            </div>
+            <div id="za_chwile">
+               ZA CHWILĘ:
+            </div>
+            <div id="lekcja_za_chwile">
+                polski
+            </div>
+            <div id="sala_za_chwile">
+                sala 435
+            </div>
+        </div>
+
+    </div>
+    <div id="przyciski">
+        <div id="ustawienia" class="menu-dol-box">
+            <div class="menu-dol-img">
+                <img src="gfx/settings-5.png" alt="USTAWIENIA" />
+            </div>
+            <div class="menu-dol-text">
+               <p> USTAWIENIA</p>
+            </div>
+        </div>
+        <div id="dzisiaj" class="menu-dol-box">
+            <div class="menu-dol-img">
+                <img src="gfx/notebook-5.png" alt="DZISIAJ" />
+            </div>
+            <div class="menu-dol-text">
+                <p>DZISIAJ</p>
+            </div>
+        </div>
+        <div id="tydzien" class="menu-dol-box">
+            <div class="menu-dol-img">
+                <img src="gfx/calendar-5.png" alt="TYDZIEŃ" />
+            </div>
+            <div class="menu-dol-text">
+               <p> TYDZIEŃ</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
